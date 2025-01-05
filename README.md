@@ -2,7 +2,7 @@
 
 ### What is this
 
-endpoint security using clerk's user-organization-role-permission
+a springboot starter that integrates Clerk and Spring Security to secure API
 
 ### Maven dependency
 
