@@ -1,9 +1,9 @@
 package com.juliusyolo.configuration;
 
 import com.juliusyolo.component.EndpointProperties;
-import com.juliusyolo.component.UserAuthenticationManager;
-import com.juliusyolo.component.UserAuthorizationManager;
-import com.juliusyolo.component.UserPermissionAuthenticationConverter;
+import com.juliusyolo.component.ReactiveUserAuthenticationManager;
+import com.juliusyolo.component.ReactiveUserAuthorizationManager;
+import com.juliusyolo.component.UserPermissionServerAuthenticationConverter;
 import com.juliusyolo.exception.UserAuthorizationException;
 import com.juliusyolo.service.UserService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
@@ -31,18 +31,18 @@ import java.nio.charset.StandardCharsets;
 public class WebFluxSecurityConfiguration {
 
     @Bean
-    public UserPermissionAuthenticationConverter userPermissionAuthenticationConverter() {
-        return new UserPermissionAuthenticationConverter();
+    public UserPermissionServerAuthenticationConverter userPermissionAuthenticationConverter() {
+        return new UserPermissionServerAuthenticationConverter();
     }
 
     @Bean
-    public UserAuthenticationManager userAuthenticationManager(UserService userService) {
-        return new UserAuthenticationManager(userService);
+    public ReactiveUserAuthenticationManager userAuthenticationManager(UserService userService) {
+        return new ReactiveUserAuthenticationManager(userService);
     }
 
     @Bean
-    public UserAuthorizationManager userAuthorizationManager(UserService userService) {
-        return new UserAuthorizationManager(userService);
+    public ReactiveUserAuthorizationManager userAuthorizationManager(UserService userService) {
+        return new ReactiveUserAuthorizationManager(userService);
     }
 
     @Bean
@@ -60,6 +60,7 @@ public class WebFluxSecurityConfiguration {
     @Bean
     public ServerAccessDeniedHandler serverAccessDeniedHandler() {
         return (exchange, denied) -> {
+            denied.printStackTrace();
             if (!(denied instanceof UserAuthorizationException)) {
                 denied = new UserAuthorizationException("USER_NOT_AUTHORIZATION");
             }
@@ -73,11 +74,11 @@ public class WebFluxSecurityConfiguration {
     }
 
     @Bean
-    public AuthenticationWebFilter authenticationWebFilter(UserPermissionAuthenticationConverter userPermissionAuthenticationConverter,
-                                                           UserAuthenticationManager userAuthenticationManager,
+    public AuthenticationWebFilter authenticationWebFilter(UserPermissionServerAuthenticationConverter userPermissionServerAuthenticationConverter,
+                                                           ReactiveUserAuthenticationManager reactiveUserAuthenticationManager,
                                                            ServerAuthenticationFailureHandler serverAuthenticationFailureHandler) {
-        AuthenticationWebFilter authenticationWebFilter = new AuthenticationWebFilter(userAuthenticationManager);
-        authenticationWebFilter.setServerAuthenticationConverter(userPermissionAuthenticationConverter);
+        AuthenticationWebFilter authenticationWebFilter = new AuthenticationWebFilter(reactiveUserAuthenticationManager);
+        authenticationWebFilter.setServerAuthenticationConverter(userPermissionServerAuthenticationConverter);
         authenticationWebFilter.setAuthenticationFailureHandler(serverAuthenticationFailureHandler);
         return authenticationWebFilter;
     }
@@ -86,12 +87,12 @@ public class WebFluxSecurityConfiguration {
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity httpSecurity,
                                                          EndpointProperties endpointProperties,
                                                          AuthenticationWebFilter authenticationWebFilter,
-                                                         UserAuthorizationManager userAuthorizationManager,
+                                                         ReactiveUserAuthorizationManager reactiveUserAuthorizationManager,
                                                          ServerAccessDeniedHandler serverAccessDeniedHandler) {
         return httpSecurity
                 .authorizeExchange(authorizeExchangeSpec -> {
                     authorizeExchangeSpec.pathMatchers(endpointProperties.permitPaths()).permitAll();
-                    authorizeExchangeSpec.pathMatchers(endpointProperties.authorizationPaths()).access(userAuthorizationManager).anyExchange().authenticated();
+                    authorizeExchangeSpec.pathMatchers(endpointProperties.authorizationPaths()).access(reactiveUserAuthorizationManager).anyExchange().authenticated();
                 })
                 .addFilterAt(authenticationWebFilter, SecurityWebFiltersOrder.AUTHENTICATION)
                 .exceptionHandling(exceptionHandlingSpec -> exceptionHandlingSpec.accessDeniedHandler(serverAccessDeniedHandler))
