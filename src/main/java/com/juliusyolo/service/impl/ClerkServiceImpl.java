@@ -14,6 +14,8 @@ import com.juliusyolo.exception.UserAuthenticationException;
 import com.juliusyolo.model.UserModel;
 import com.juliusyolo.model.UserPermissionAuthenticationToken;
 import com.juliusyolo.service.ClerkService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.util.CollectionUtils;
 
@@ -23,6 +25,9 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class ClerkServiceImpl implements ClerkService {
+
+    private final static Logger LOGGER =
+            LoggerFactory.getLogger(ClerkServiceImpl.class);
 
     private final Clerk clerk;
 
@@ -38,7 +43,7 @@ public class ClerkServiceImpl implements ClerkService {
 
     @Override
     public String getActiveClerkUserId(String token) {
-        System.out.println(token);
+        LOGGER.info("ClerkServiceImpl#getActiveClerkUserId token:{}", token);
         try {
             VerifyClientRequestBody req = VerifyClientRequestBody.builder().token(token).build();
             VerifyClientResponse res = clerk.clients().verify().request(req).call();
@@ -55,7 +60,7 @@ public class ClerkServiceImpl implements ClerkService {
             }
             return null;
         } catch (Exception e) {
-            throw new UserAuthenticationException(e.getMessage(), e);
+            throw new UserAuthenticationException("No client found", e);
         }
     }
 
@@ -84,7 +89,7 @@ public class ClerkServiceImpl implements ClerkService {
             }
             return userModel;
         } catch (Exception e) {
-            throw new UserAuthenticationException(e.getMessage(), e);
+            throw new UserAuthenticationException("Fetch user failed", e);
         }
 
     }
