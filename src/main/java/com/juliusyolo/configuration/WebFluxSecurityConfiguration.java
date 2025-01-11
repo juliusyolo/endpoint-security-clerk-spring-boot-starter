@@ -60,7 +60,6 @@ public class WebFluxSecurityConfiguration {
     @Bean
     public ServerAccessDeniedHandler serverAccessDeniedHandler() {
         return (exchange, denied) -> {
-            denied.printStackTrace();
             if (!(denied instanceof UserAuthorizationException)) {
                 denied = new UserAuthorizationException("USER_NOT_AUTHORIZATION");
             }
@@ -73,7 +72,6 @@ public class WebFluxSecurityConfiguration {
         };
     }
 
-    @Bean
     public AuthenticationWebFilter authenticationWebFilter(UserPermissionServerAuthenticationConverter userPermissionServerAuthenticationConverter,
                                                            ReactiveUserAuthenticationManager reactiveUserAuthenticationManager,
                                                            ServerAuthenticationFailureHandler serverAuthenticationFailureHandler) {
@@ -86,7 +84,9 @@ public class WebFluxSecurityConfiguration {
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity httpSecurity,
                                                          EndpointProperties endpointProperties,
-                                                         AuthenticationWebFilter authenticationWebFilter,
+                                                         UserPermissionServerAuthenticationConverter userPermissionServerAuthenticationConverter,
+                                                         ReactiveUserAuthenticationManager reactiveUserAuthenticationManager,
+                                                         ServerAuthenticationFailureHandler serverAuthenticationFailureHandler,
                                                          ReactiveUserAuthorizationManager reactiveUserAuthorizationManager,
                                                          ServerAccessDeniedHandler serverAccessDeniedHandler) {
         return httpSecurity
@@ -94,10 +94,15 @@ public class WebFluxSecurityConfiguration {
                     authorizeExchangeSpec.pathMatchers(endpointProperties.permitPaths()).permitAll();
                     authorizeExchangeSpec.pathMatchers(endpointProperties.authorizationPaths()).access(reactiveUserAuthorizationManager).anyExchange().authenticated();
                 })
-                .addFilterAt(authenticationWebFilter, SecurityWebFiltersOrder.AUTHENTICATION)
+                .addFilterAt(authenticationWebFilter(
+                        userPermissionServerAuthenticationConverter,
+                         reactiveUserAuthenticationManager,
+                         serverAuthenticationFailureHandler
+                ), SecurityWebFiltersOrder.AUTHENTICATION)
                 .exceptionHandling(exceptionHandlingSpec -> exceptionHandlingSpec.accessDeniedHandler(serverAccessDeniedHandler))
                 .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
                 .formLogin(ServerHttpSecurity.FormLoginSpec::disable)
+                .logout(ServerHttpSecurity.LogoutSpec::disable)
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .cors(ServerHttpSecurity.CorsSpec::disable)
                 .build();
