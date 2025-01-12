@@ -48,7 +48,7 @@ public class WebServletSecurityConfiguration {
         return (request, response, exception) -> {
             response.setStatus(HttpStatus.FORBIDDEN.value());
             response.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
-            response.getWriter().write(String.format("{\"code\":\"403\",message:\"%s\"}", exception.getMessage()));
+            response.getWriter().write(String.format("{\"code\":\"403\",\"message\":\"%s\"}", exception.getMessage()));
         };
     }
 
@@ -74,7 +74,7 @@ public class WebServletSecurityConfiguration {
             }
             response.setStatus(HttpStatus.FORBIDDEN.value());
             response.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
-            response.getWriter().write(String.format("{\"code\":\"401\",message:\"%s\"}",
+            response.getWriter().write(String.format("{\"code\":\"401\",\"message\":\"%s\"}",
                     accessDeniedException.getMessage()));
         };
     }

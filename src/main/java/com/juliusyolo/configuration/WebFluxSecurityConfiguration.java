@@ -60,7 +60,7 @@ public class WebFluxSecurityConfiguration {
             response.setStatusCode(HttpStatus.FORBIDDEN);
             response.getHeaders().set(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
             DataBuffer buffer = response.bufferFactory()
-                    .wrap(String.format("{\"code\":\"403\",message:\"%s\"}", exception.getMessage()).getBytes(StandardCharsets.UTF_8));
+                    .wrap(String.format("{\"code\":\"403\",\"message\":\"%s\"}", exception.getMessage()).getBytes(StandardCharsets.UTF_8));
             return response.writeWith(Mono.just(buffer));
         };
     }
@@ -75,7 +75,7 @@ public class WebFluxSecurityConfiguration {
             response.setStatusCode(HttpStatus.UNAUTHORIZED);
             response.getHeaders().set(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
             DataBuffer buffer = response.bufferFactory().
-                    wrap(String.format("{\"code\":\"401\",message:\"%s\"}", denied.getMessage()).getBytes(StandardCharsets.UTF_8));
+                    wrap(String.format("{\"code\":\"401\",\"message\":\"%s\"}", denied.getMessage()).getBytes(StandardCharsets.UTF_8));
             return response.writeWith(Mono.just(buffer));
         };
     }
