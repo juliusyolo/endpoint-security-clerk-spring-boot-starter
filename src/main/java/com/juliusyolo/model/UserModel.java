@@ -8,7 +8,15 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.Optional;
 
-
+/**
+ * <p>
+ * custom user model which implements {@link UserDetails }
+ * just holds clerk user info and clerk organization memberships
+ * </p>
+ *
+ * @author julius.yolo
+ * @version : UserModel v0.1
+ */
 public class UserModel implements UserDetails {
 
     private User user;

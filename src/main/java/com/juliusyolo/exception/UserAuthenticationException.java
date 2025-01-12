@@ -6,7 +6,7 @@ import reactor.core.publisher.Mono;
 
 /**
  * <p>
- * UserAuthenticationException
+ * custom user authentication exception that extends {@link AuthenticationException }
  * </p>
  *
  * @author julius.yolo
@@ -22,12 +22,11 @@ public class UserAuthenticationException extends AuthenticationException {
         super(msg, cause);
     }
 
-    public static <T> Mono<T> error(String msg){
+    public static <T> Mono<T> error(String msg) {
         return Mono.error(new UserAuthenticationException(msg));
     }
 
-
-    public static <T> Mono<T> error(String msg, Throwable cause){
+    public static <T> Mono<T> error(String msg, Throwable cause) {
         return Mono.error(new UserAuthenticationException(msg, cause));
     }
 }

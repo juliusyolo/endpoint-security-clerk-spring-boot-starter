@@ -6,6 +6,16 @@ import org.springframework.security.core.GrantedAuthority;
 import java.util.Collection;
 import java.util.Collections;
 
+/**
+ * <p>
+ * a {@link AbstractAuthenticationToken} implement that uses user's token to authenticate
+ * when unauthenticated, it only has token attribute.And when authenticated,it has a principal that represents the
+ * authenticated user.
+ * </p>
+ *
+ * @author julius.yolo
+ * @version : UserPermissionAuthenticationToken v0.1
+ */
 public class UserPermissionAuthenticationToken extends AbstractAuthenticationToken {
     private Object principal;
     private String token;

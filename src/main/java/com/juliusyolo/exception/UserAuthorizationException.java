@@ -4,7 +4,7 @@ import reactor.core.publisher.Mono;
 
 /**
  * <p>
- * UserAuthorizationException
+ * custom user authorization exception that extends {@link AccessDeniedException }
  * </p>
  *
  * @author julius.yolo

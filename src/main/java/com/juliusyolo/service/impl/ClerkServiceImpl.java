@@ -24,6 +24,14 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+/**
+ * <p>
+ * a clerk implement
+ * </p>
+ *
+ * @author julius.yolo
+ * @version : ClerkService v0.1
+ */
 public class ClerkServiceImpl implements ClerkService {
 
     private final static Logger LOGGER =

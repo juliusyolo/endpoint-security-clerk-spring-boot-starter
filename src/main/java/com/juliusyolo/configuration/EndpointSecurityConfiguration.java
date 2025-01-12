@@ -11,6 +11,14 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 
+/**
+ * <p>
+ * endpoint security configuration
+ * </p>
+ *
+ * @author julius.yolo
+ * @version : EndpointSecurityConfiguration v0.1
+ */
 @AutoConfiguration
 @EnableConfigurationProperties({ClerkProperties.class, EndpointProperties.class})
 @Import({WebFluxSecurityConfiguration.class, WebServletSecurityConfiguration.class})

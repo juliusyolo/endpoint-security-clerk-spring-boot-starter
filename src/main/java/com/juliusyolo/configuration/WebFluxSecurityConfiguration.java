@@ -25,6 +25,14 @@ import reactor.core.publisher.Mono;
 
 import java.nio.charset.StandardCharsets;
 
+/**
+ * <p>
+ * reactive web security configuration
+ * </p>
+ *
+ * @author julius.yolo
+ * @version : WebFluxSecurityConfiguration v0.1
+ */
 @Configuration
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.REACTIVE)
 @EnableWebFluxSecurity
