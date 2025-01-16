@@ -57,7 +57,7 @@ public class WebServletSecurityConfiguration {
         return new UserPermissionAuthenticationConverter();
     }
 
-    @Bean
+
     public AuthenticationFilter authenticationFilter(UserPermissionAuthenticationConverter userPermissionAuthenticationConverter,
                                                      UserAuthenticationManager userAuthenticationManager,
                                                      AuthenticationFailureHandler authenticationFailureHandler) {
@@ -83,7 +83,9 @@ public class WebServletSecurityConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity,
                                                    EndpointProperties endpointProperties,
                                                    UserAuthorizationManager userAuthorizationManager,
-                                                   AuthenticationFilter authenticationFilter,
+                                                   UserPermissionAuthenticationConverter userPermissionAuthenticationConverter,
+                                                   UserAuthenticationManager userAuthenticationManager,
+                                                   AuthenticationFailureHandler authenticationFailureHandler,
                                                    AccessDeniedHandler accessDeniedHandler) throws Exception {
         return httpSecurity.authorizeHttpRequests(authorizeHttp -> {
                     authorizeHttp.requestMatchers(endpointProperties.authorizationPaths()).permitAll();
@@ -91,7 +93,8 @@ public class WebServletSecurityConfiguration {
                             .access(userAuthorizationManager)
                             .anyRequest().authenticated();
                 })
-                .addFilterAt(authenticationFilter, AuthenticationFilter.class)
+                .addFilterAt(authenticationFilter(userPermissionAuthenticationConverter, userAuthenticationManager, authenticationFailureHandler),
+                        AuthenticationFilter.class)
                 .exceptionHandling(exceptionHandlingConfigurer ->
                         exceptionHandlingConfigurer.accessDeniedHandler(accessDeniedHandler))
                 .httpBasic(Customizer.withDefaults())
