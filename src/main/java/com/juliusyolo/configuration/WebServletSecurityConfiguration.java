@@ -7,6 +7,8 @@ import com.juliusyolo.component.UserAuthorizationManager;
 import com.juliusyolo.component.UserPermissionAuthenticationConverter;
 import com.juliusyolo.exception.UserAuthorizationException;
 import com.juliusyolo.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,6 +34,7 @@ import org.springframework.security.web.authentication.AuthenticationFilter;
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 public class WebServletSecurityConfiguration {
 
+    private static final Logger logger = LoggerFactory.getLogger(WebServletSecurityConfiguration.class);
 
     @Bean
     public UserAuthorizationManager userAuthorizationManager(UserService userService) {
@@ -63,6 +66,9 @@ public class WebServletSecurityConfiguration {
                                                      AuthenticationFailureHandler authenticationFailureHandler) {
         AuthenticationFilter authenticationWebFilter = new AuthenticationFilter(userAuthenticationManager, userPermissionAuthenticationConverter);
         authenticationWebFilter.setFailureHandler(authenticationFailureHandler);
+        authenticationWebFilter.setSuccessHandler((request, response, authentication) -> {
+            logger.info("Successfully authenticated user {}", authentication.getName());
+        });
         return authenticationWebFilter;
     }
 
@@ -70,7 +76,7 @@ public class WebServletSecurityConfiguration {
     public AccessDeniedHandler accessDeniedHandler() {
         return (request, response, accessDeniedException) -> {
             if (!(accessDeniedException instanceof UserAuthorizationException)) {
-                accessDeniedException = new UserAuthorizationException("USER_NOT_AUTHORIZATION");
+                accessDeniedException = new UserAuthorizationException("No authorization found");
             }
             response.setStatus(HttpStatus.FORBIDDEN.value());
             response.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
@@ -88,7 +94,7 @@ public class WebServletSecurityConfiguration {
                                                    AuthenticationFailureHandler authenticationFailureHandler,
                                                    AccessDeniedHandler accessDeniedHandler) throws Exception {
         return httpSecurity.authorizeHttpRequests(authorizeHttp -> {
-                    authorizeHttp.requestMatchers(endpointProperties.authorizationPaths()).permitAll();
+                    authorizeHttp.requestMatchers(endpointProperties.permitPaths()).permitAll();
                     authorizeHttp.requestMatchers(endpointProperties.authorizationPaths())
                             .access(userAuthorizationManager)
                             .anyRequest().authenticated();
@@ -99,6 +105,8 @@ public class WebServletSecurityConfiguration {
                         exceptionHandlingConfigurer.accessDeniedHandler(accessDeniedHandler))
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
+                .logout(AbstractHttpConfigurer::disable)
+                .anonymous(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable)
                 .build();

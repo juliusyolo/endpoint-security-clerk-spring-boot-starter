@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.juliusyolo</groupId>
     <artifactId>endpoint-security-clerk-spring-boot-starter</artifactId>
-    <version>0.0.1-RELEASE</version>
+    <version>1.0.1-RELEASE</version>
     <name>endpoint-security-clerk-spring-boot-starter</name>
     <description>endpoint-security-clerk-spring-boot-starter</description>
     <url>https://juliusyolo.com</url>

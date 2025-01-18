@@ -24,7 +24,7 @@ public class UserPermissionAuthenticationConverter implements AuthenticationConv
     @Override
     public Authentication convert(HttpServletRequest request) {
         String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if (Objects.isNull(authorization) || authorization.startsWith("Bearer ")) {
+        if (Objects.isNull(authorization) || !authorization.startsWith("Bearer ")) {
             throw new UserAuthenticationException("No token found");
         }
         String token = authorization.substring(7);

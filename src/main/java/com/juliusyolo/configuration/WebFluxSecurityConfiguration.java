@@ -69,7 +69,7 @@ public class WebFluxSecurityConfiguration {
     public ServerAccessDeniedHandler serverAccessDeniedHandler() {
         return (exchange, denied) -> {
             if (!(denied instanceof UserAuthorizationException)) {
-                denied = new UserAuthorizationException("USER_NOT_AUTHORIZATION");
+                denied = new UserAuthorizationException("No authorization found");
             }
             ServerHttpResponse response = exchange.getResponse();
             response.setStatusCode(HttpStatus.UNAUTHORIZED);
@@ -111,6 +111,7 @@ public class WebFluxSecurityConfiguration {
                 .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
                 .formLogin(ServerHttpSecurity.FormLoginSpec::disable)
                 .logout(ServerHttpSecurity.LogoutSpec::disable)
+                .anonymous(ServerHttpSecurity.AnonymousSpec::disable)
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .cors(ServerHttpSecurity.CorsSpec::disable)
                 .build();
