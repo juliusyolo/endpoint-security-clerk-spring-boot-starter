@@ -29,6 +29,7 @@ public class ReactiveUserAuthenticationManager implements ReactiveAuthentication
         this.userService = userService;
     }
 
+
     @Override
     public Mono<Authentication> authenticate(Authentication authentication) {
         return Mono.justOrEmpty(authentication)

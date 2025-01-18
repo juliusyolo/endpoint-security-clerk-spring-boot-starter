@@ -5,6 +5,7 @@ import com.juliusyolo.component.ReactiveUserAuthenticationManager;
 import com.juliusyolo.component.ReactiveUserAuthorizationManager;
 import com.juliusyolo.component.UserPermissionServerAuthenticationConverter;
 import com.juliusyolo.exception.UserAuthorizationException;
+import com.juliusyolo.model.UserPermissionAuthenticationToken;
 import com.juliusyolo.service.UserService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Bean;
@@ -38,21 +39,44 @@ import java.nio.charset.StandardCharsets;
 @EnableWebFluxSecurity
 public class WebFluxSecurityConfiguration {
 
+
+    /**
+     * bearer token transform to user permission token
+     *
+     * @return UserPermissionServerAuthenticationConverter
+     */
     @Bean
     public UserPermissionServerAuthenticationConverter userPermissionAuthenticationConverter() {
         return new UserPermissionServerAuthenticationConverter();
     }
 
+    /**
+     * authenticate user by {@link UserPermissionAuthenticationToken}
+     *
+     * @param userService user service
+     * @return ReactiveUserAuthenticationManager
+     */
     @Bean
     public ReactiveUserAuthenticationManager userAuthenticationManager(UserService userService) {
         return new ReactiveUserAuthenticationManager(userService);
     }
 
+    /**
+     * authorize user by {@link UserPermissionAuthenticationToken}
+     *
+     * @param userService user service
+     * @return ReactiveUserAuthorizationManager
+     */
     @Bean
     public ReactiveUserAuthorizationManager userAuthorizationManager(UserService userService) {
         return new ReactiveUserAuthorizationManager(userService);
     }
 
+    /**
+     * a handler to process authentication failure in spring security
+     *
+     * @return ServerAuthenticationFailureHandler
+     */
     @Bean
     public ServerAuthenticationFailureHandler serverAuthenticationFailureHandler() {
         return (webFilterExchange, exception) -> {
@@ -65,6 +89,11 @@ public class WebFluxSecurityConfiguration {
         };
     }
 
+    /**
+     * a handler to process authorize access denied in spring security
+     *
+     * @return ServerAccessDeniedHandler
+     */
     @Bean
     public ServerAccessDeniedHandler serverAccessDeniedHandler() {
         return (exchange, denied) -> {
@@ -80,6 +109,14 @@ public class WebFluxSecurityConfiguration {
         };
     }
 
+    /**
+     * a spring security filter to authenticate user
+     *
+     * @param userPermissionServerAuthenticationConverter userPermissionServerAuthenticationConverter
+     * @param reactiveUserAuthenticationManager           reactiveUserAuthenticationManager
+     * @param serverAuthenticationFailureHandler          serverAuthenticationFailureHandler
+     * @return AuthenticationWebFilter
+     */
     public AuthenticationWebFilter authenticationWebFilter(UserPermissionServerAuthenticationConverter userPermissionServerAuthenticationConverter,
                                                            ReactiveUserAuthenticationManager reactiveUserAuthenticationManager,
                                                            ServerAuthenticationFailureHandler serverAuthenticationFailureHandler) {
@@ -89,6 +126,18 @@ public class WebFluxSecurityConfiguration {
         return authenticationWebFilter;
     }
 
+    /**
+     * configure web security filter chain
+     *
+     * @param httpSecurity                                httpSecurity
+     * @param endpointProperties                          endpointProperties
+     * @param userPermissionServerAuthenticationConverter userPermissionServerAuthenticationConverter
+     * @param reactiveUserAuthenticationManager           reactiveUserAuthenticationManager
+     * @param serverAuthenticationFailureHandler          serverAuthenticationFailureHandler
+     * @param reactiveUserAuthorizationManager            reactiveUserAuthorizationManager
+     * @param serverAccessDeniedHandler                   serverAccessDeniedHandler
+     * @return SecurityWebFilterChain
+     */
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity httpSecurity,
                                                          EndpointProperties endpointProperties,
@@ -104,8 +153,8 @@ public class WebFluxSecurityConfiguration {
                 })
                 .addFilterAt(authenticationWebFilter(
                         userPermissionServerAuthenticationConverter,
-                         reactiveUserAuthenticationManager,
-                         serverAuthenticationFailureHandler
+                        reactiveUserAuthenticationManager,
+                        serverAuthenticationFailureHandler
                 ), SecurityWebFiltersOrder.AUTHENTICATION)
                 .exceptionHandling(exceptionHandlingSpec -> exceptionHandlingSpec.accessDeniedHandler(serverAccessDeniedHandler))
                 .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)

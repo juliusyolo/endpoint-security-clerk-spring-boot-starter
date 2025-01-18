@@ -2,7 +2,6 @@ package com.juliusyolo.component;
 
 import com.juliusyolo.model.UserPermissionAuthenticationToken;
 import com.juliusyolo.service.UserService;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.authorization.ReactiveAuthorizationManager;
 import org.springframework.security.core.Authentication;

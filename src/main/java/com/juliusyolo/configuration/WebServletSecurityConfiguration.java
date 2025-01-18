@@ -6,6 +6,7 @@ import com.juliusyolo.component.UserAuthenticationManager;
 import com.juliusyolo.component.UserAuthorizationManager;
 import com.juliusyolo.component.UserPermissionAuthenticationConverter;
 import com.juliusyolo.exception.UserAuthorizationException;
+import com.juliusyolo.model.UserPermissionAuthenticationToken;
 import com.juliusyolo.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,16 +37,33 @@ public class WebServletSecurityConfiguration {
 
     private static final Logger logger = LoggerFactory.getLogger(WebServletSecurityConfiguration.class);
 
+    /**
+     * authorize user by {@link UserPermissionAuthenticationToken}
+     *
+     * @param userService user service
+     * @return ReactiveUserAuthorizationManager
+     */
     @Bean
     public UserAuthorizationManager userAuthorizationManager(UserService userService) {
         return new UserAuthorizationManager(userService);
     }
 
+    /**
+     * authenticate user by {@link UserPermissionAuthenticationToken}
+     *
+     * @param userService user service
+     * @return ReactiveUserAuthenticationManager
+     */
     @Bean
     public UserAuthenticationManager userAuthenticationManager(UserService userService) {
         return new UserAuthenticationManager(userService);
     }
 
+    /**
+     * a handler to process authentication failure in spring security
+     *
+     * @return ServerAuthenticationFailureHandler
+     */
     @Bean
     public AuthenticationFailureHandler authenticationFailureHandler() {
         return (request, response, exception) -> {
@@ -55,12 +73,24 @@ public class WebServletSecurityConfiguration {
         };
     }
 
+    /**
+     * bearer token transform to user permission token
+     *
+     * @return UserPermissionServerAuthenticationConverter
+     */
     @Bean
     public UserPermissionAuthenticationConverter userPermissionAuthenticationConverter() {
         return new UserPermissionAuthenticationConverter();
     }
 
-
+    /**
+     * a spring security filter to authenticate user
+     *
+     * @param userPermissionAuthenticationConverter userPermissionAuthenticationConverter
+     * @param userAuthenticationManager             userAuthenticationManager
+     * @param authenticationFailureHandler          authenticationFailureHandler
+     * @return AuthenticationFilter
+     */
     public AuthenticationFilter authenticationFilter(UserPermissionAuthenticationConverter userPermissionAuthenticationConverter,
                                                      UserAuthenticationManager userAuthenticationManager,
                                                      AuthenticationFailureHandler authenticationFailureHandler) {
@@ -72,6 +102,11 @@ public class WebServletSecurityConfiguration {
         return authenticationWebFilter;
     }
 
+    /**
+     * a handler to process authorize access denied in spring security
+     *
+     * @return ServerAccessDeniedHandler
+     */
     @Bean
     public AccessDeniedHandler accessDeniedHandler() {
         return (request, response, accessDeniedException) -> {
@@ -85,6 +120,19 @@ public class WebServletSecurityConfiguration {
         };
     }
 
+    /**
+     * configure web security filter chain
+     *
+     * @param httpSecurity                          httpSecurity
+     * @param endpointProperties                    endpointProperties
+     * @param userAuthorizationManager              userAuthorizationManager
+     * @param userPermissionAuthenticationConverter userPermissionAuthenticationConverter
+     * @param userAuthenticationManager             userAuthenticationManager
+     * @param authenticationFailureHandler          authenticationFailureHandler
+     * @param accessDeniedHandler                   accessDeniedHandler
+     * @return SecurityFilterChain
+     * @throws Exception authorizeHttpRequests configuration may throw
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity,
                                                    EndpointProperties endpointProperties,

@@ -1,4 +1,5 @@
 package com.juliusyolo.exception;
+
 import org.springframework.security.access.AccessDeniedException;
 import reactor.core.publisher.Mono;
 
@@ -10,7 +11,7 @@ import reactor.core.publisher.Mono;
  * @author julius.yolo
  * @version : UserAuthorizationException v0.1
  */
-public class UserAuthorizationException extends AccessDeniedException{
+public class UserAuthorizationException extends AccessDeniedException {
 
 
     public UserAuthorizationException(String msg) {
@@ -21,12 +22,12 @@ public class UserAuthorizationException extends AccessDeniedException{
         super(msg, cause);
     }
 
-    public static <T> Mono<T> error(String msg){
+    public static <T> Mono<T> error(String msg) {
         return Mono.error(new UserAuthorizationException(msg));
     }
 
 
-    public static <T> Mono<T> error(String msg, Throwable cause){
+    public static <T> Mono<T> error(String msg, Throwable cause) {
         return Mono.error(new UserAuthorizationException(msg, cause));
     }
 

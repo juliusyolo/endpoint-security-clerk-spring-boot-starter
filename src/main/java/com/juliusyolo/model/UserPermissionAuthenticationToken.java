@@ -17,7 +17,13 @@ import java.util.Collections;
  * @version : UserPermissionAuthenticationToken v0.1
  */
 public class UserPermissionAuthenticationToken extends AbstractAuthenticationToken {
+    /**
+     * the authenticated user principal,such as clerk user model
+     */
     private Object principal;
+    /**
+     * a token,such as clerk token to authenticate user
+     */
     private String token;
 
     public UserPermissionAuthenticationToken(Object principal, Collection<? extends GrantedAuthority> authorities) {

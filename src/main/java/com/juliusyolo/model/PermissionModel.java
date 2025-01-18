@@ -12,6 +12,9 @@ import org.springframework.security.core.GrantedAuthority;
  * @version : PermissionModel v0.1
  */
 public class PermissionModel implements GrantedAuthority {
+    /**
+     * permission code
+     */
     private String permission;
 
     public PermissionModel(String permission) {

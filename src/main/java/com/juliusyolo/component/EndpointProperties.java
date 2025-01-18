@@ -12,9 +12,13 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @ConfigurationProperties("yolo.endpoint")
 public record EndpointProperties(
+        // endpoint prefix
         String prefix,
+        // permit paths
         String permitPaths,
+        // should authorize paths
         String authorizationPaths,
+        // whether enable path authorization
         boolean pathAuthorizationEnable
 ) {
 }

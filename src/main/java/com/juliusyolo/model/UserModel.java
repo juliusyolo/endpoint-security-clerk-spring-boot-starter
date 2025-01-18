@@ -19,8 +19,14 @@ import java.util.Optional;
  */
 public class UserModel implements UserDetails {
 
+    /**
+     * clerk user model
+     */
     private User user;
 
+    /**
+     * clerk user's organization memberships
+     */
     private Optional<? extends OrganizationMemberships> organizationMemberships;
 
     @Override

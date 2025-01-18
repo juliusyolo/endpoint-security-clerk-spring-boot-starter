@@ -10,24 +10,28 @@
     </parent>
     <groupId>com.juliusyolo</groupId>
     <artifactId>endpoint-security-clerk-spring-boot-starter</artifactId>
-    <version>1.0.1-RELEASE</version>
+    <version>1.0.2-RELEASE</version>
     <name>endpoint-security-clerk-spring-boot-starter</name>
     <description>endpoint-security-clerk-spring-boot-starter</description>
     <url>https://juliusyolo.com</url>
     <licenses>
         <license>
-
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0</url>
         </license>
     </licenses>
     <developers>
         <developer>
             <name>juliusyolo</name>
+            <email>xiaoshengsheng1994@gmail.com</email>
+            <organization>Juliusyolo</organization>
+            <organizationUrl>https://www.juliusyolo.com</organizationUrl>
         </developer>
     </developers>
     <scm>
-        <connection/>
-        <developerConnection/>
-        <tag/>
+        <connection>scm:git:git://github.com/juliusyolo/endpoint-security-clerk-spring-boot-starter.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com:juliusyolo/endpoint-security-clerk-spring-boot-starter.git
+        </developerConnection>
         <url>https://github.com/juliusyolo/endpoint-security-clerk-spring-boot-starter</url>
     </scm>
     <properties>
@@ -84,24 +88,27 @@
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <executions>
                     <execution>
+                        <id>attach-javadocs</id>
                         <goals>
-                            <goal>javadoc</goal>
+                            <goal>jar</goal>
                         </goals>
                     </execution>
                 </executions>
             </plugin>
-<!--            <plugin>-->
-<!--                <groupId>org.apache.maven.plugins</groupId>-->
-<!--                <artifactId>maven-gpg-plugin</artifactId>-->
-<!--                <version>1.6</version>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <goals>-->
-<!--                            <goal>sign</goal>-->
-<!--                        </goals>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--            </plugin>-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.6</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
