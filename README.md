@@ -10,7 +10,7 @@ a springboot starter that integrates Clerk and Spring Security to secure API
 <dependency>
     <groupId>com.juliusyolo</groupId>
     <artifactId>endpoint-security-clerk-spring-boot-starter</artifactId>
-    <version>0.0.1-RELEASE</version>
+    <version>1.0.2-RELEASE</version>
 </dependency>
 ```
 
