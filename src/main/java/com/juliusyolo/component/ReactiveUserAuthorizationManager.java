@@ -36,11 +36,4 @@ public class ReactiveUserAuthorizationManager implements ReactiveAuthorizationMa
                 .map(AuthorizationDecision::new);
     }
 
-    @Override
-    public Mono<Void> verify(Mono<Authentication> authentication, AuthorizationContext object) {
-        return check(authentication, object)
-                .filter(AuthorizationDecision::isGranted)
-                .switchIfEmpty(Mono.error(new AccessDeniedException("Access Denied")))
-                .flatMap((decision) -> Mono.empty());
-    }
 }

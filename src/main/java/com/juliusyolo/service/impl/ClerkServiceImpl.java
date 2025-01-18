@@ -104,6 +104,9 @@ public class ClerkServiceImpl implements ClerkService {
 
     @Override
     public boolean verifyAuthorization(UserPermissionAuthenticationToken token, String path) {
+        if (!endpointProperties.pathAuthorizationEnable()){
+            return true;
+        }
         if (path.startsWith(endpointProperties.prefix())) {
             path = path.substring(endpointProperties.prefix().length());
         }

@@ -14,6 +14,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public record EndpointProperties(
         String prefix,
         String permitPaths,
-        String authorizationPaths
+        String authorizationPaths,
+        boolean pathAuthorizationEnable
 ) {
 }
