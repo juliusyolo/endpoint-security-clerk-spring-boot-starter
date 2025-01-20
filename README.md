@@ -20,3 +20,5 @@ a springboot starter that integrates Clerk and Spring Security to secure API
     - user authentication that uses clerk's authentication client
     - user authorization that bases on clerk's organization and role and permission
 - just has no extra configuration
+
+[@see this post](https://www.juliusyolo.com/posts/endpoint-security-using-clerk.html)
